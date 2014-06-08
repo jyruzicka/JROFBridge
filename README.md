@@ -4,6 +4,8 @@
 [![License](https://img.shields.io/cocoapods/l/JROFBridge.svg?style=flat)](http://cocoadocs.org/docsets/JROFBridge)
 [![Platform](https://img.shields.io/cocoapods/p/JROFBridge.svg?style=flat)](http://cocoadocs.org/docsets/JROFBridge)
 
+Cocoa wrapper around OmniFocus' ScriptingBridge functionality. Navigate the project/folder/task tree, skip projects, write to a SQLite database.
+
 ## Usage
 
 To run the example project; clone the repo, and run `pod install` from the Example directory first.
@@ -24,4 +26,3 @@ Jan-Yves Ruzicka, jan@1klb.com
 ## License
 
 JROFBridge is available under the MIT license. See the LICENSE file for more info.
-
