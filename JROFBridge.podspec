@@ -1,37 +1,20 @@
-#
-# Be sure to run `pod lib lint NAME.podspec' to ensure this is a
-# valid spec and remove all comments before submitting the spec.
-#
-# To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
-#
 Pod::Spec.new do |s|
   s.name             = "JROFBridge"
   s.version          = File.read('VERSION')
-  s.summary          = "A short description of JROFBridge."
+  s.summary          = "Bridge your program and OmniFocus."
   s.description      = <<-DESC
-                       An optional longer description of JROFBridge
-
-                       * Markdown format.
-                       * Don't worry about the indent, we strip it!
+                       JROFBridge acts as a bridge between OmniFocus and your Cocoa application. Version differences, possibly-not-running apps, differences between AppStore and refular apps, missing values, and all other problems are taken care of. All you need to do is include the library and start using it in your app! 
                        DESC
-  s.homepage         = "http://EXAMPLE/NAME"
-  s.screenshots      = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
-  s.license          = 'MIT'
+  s.homepage         = "http://1klb.com/projects/JROFBridge"
+  s.license          = { type: 'MIT', file: "LICENSE" }
   s.author           = { "Jan-Yves Ruzicka" => "jan@1klb.com" }
-  s.source           = { :git => "http://EXAMPLE/NAME.git", :tag => s.version.to_s }
-  s.social_media_url = 'https://twitter.com/EXAMPLE'
+  s.source           = { :git => "https://github.com/jyruzicka/JROFBridge.git", :tag => s.version.to_s }
+  s.social_media_url = 'https://twitter.com/akchizar'
 
-  # s.platform     = :ios, '5.0'
-  # s.ios.deployment_target = '5.0'
-  # s.osx.deployment_target = '10.7'
+  s.osx.deployment_target = '10.9.3'
   s.requires_arc = true
 
   s.source_files = 'Classes'
-  s.resources = 'Assets/*.png'
 
-  s.ios.exclude_files = 'Classes/osx'
-  s.osx.exclude_files = 'Classes/ios'
-  # s.public_header_files = 'Classes/**/*.h'
-  # s.frameworks = 'SomeFramework', 'AnotherFramework'
-  # s.dependency 'JSONKit', '~> 1.4'
+  s.dependency "FMDB", "~> 2.1"
 end
