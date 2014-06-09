@@ -129,7 +129,8 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
                       p.ancestry,
                       p.completionDate,
                       p.creationDate,
-                      p.id];
+                      p.id
+                    ];
     
     if (![self.database executeUpdate:query withArgumentsInArray:args])
         return [self.database lastError];

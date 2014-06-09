@@ -59,7 +59,7 @@
 }
 
 -(NSDate *)completionDate {
-    if (!self.completed) return nil;
+    if (!self.completed) return NULL;
     
     if (!_completionDate) _completionDate = [self.project.completionDate get];
     return _completionDate;
