@@ -34,7 +34,7 @@ static NSString *kJRProcessString;
     return self;
 }
 
-+(id)instance {
++(JROmniFocus *)instance {
     if (!kJRInstance)
         return [[self alloc] init];
     else

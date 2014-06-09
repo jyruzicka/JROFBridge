@@ -27,7 +27,7 @@ typedef enum {JROmniFocusVersion1, JROmniFocusVersion2, JROmniFocusVersion2Pro} 
 
 #pragma mark Initializers and factories
 -(id)init;
-+(id)instance;
++(JROmniFocus *)instance;
 
 #pragma mark Instance methods and properties
 -(JROmniFocusVersion)version;
