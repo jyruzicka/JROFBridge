@@ -30,6 +30,7 @@ typedef enum OmniFocusProjectStatus OmniFocusProjectStatus;
 
 - (SBElementArray *) flattenedProjects;
 - (SBElementArray *) flattenedTasks;
+- (SBElementArray *) flattenedFolders;
 @end
 
 @interface OmniFocusSection : SBObject

@@ -28,11 +28,11 @@ static NSArray *kJRExcludedFolders;
     return [[self alloc] initWithFolder:folder parent:parent];
 }
 
-+(NSArray *)foldersFromArray:(NSArray *)array parent:(id)parent{
++(NSMutableArray *)foldersFromArray:(NSArray *)array parent:(JROFObject *)parent{
     return [self foldersFromArray:array parent:parent excluding:nil];
 }
 
-+(NSArray *)foldersFromArray:(NSArray *)array parent:(id)parent excluding:(NSArray *)exclusions {
++(NSMutableArray *)foldersFromArray:(NSArray *)array parent:(JROFObject *)parent excluding:(NSArray *)exclusions {
     NSMutableArray *arr = [NSMutableArray arrayWithCapacity:array.count];
     for (OmniFocusFolder *f in array) {
         if ([exclusions containsObject: f.name]) continue;
@@ -43,24 +43,14 @@ static NSArray *kJRExcludedFolders;
 
 #pragma mark Getters
 -(NSMutableArray *)folders {
-    if (!_folders) {
-        _folders = [NSMutableArray arrayWithCapacity:self.folder.folders.count];
-        for (OmniFocusFolder *f in self.folder.folders) {
-            JRFolder *jrf = [JRFolder folderWithFolder:f parent:self];
-            [_folders addObject:jrf];
-        }
-    }
+    if (!_folders)
+        _folders = [JRFolder foldersFromArray: self.folder.folders parent:self];
     return _folders;
 }
 
 -(NSMutableArray *)projects {
-    if (!_projects) {
-        _projects = [NSMutableArray arrayWithCapacity:self.folder.projects.count];
-        for (OmniFocusProject *p in self.folder.projects) {
-            JRProject *jrp = [JRProject projectWithProject:p parent:self];
-            [_projects addObject:jrp];
-        }
-    }
+    if (!_projects)
+       _projects = [JRProject projectsFromArray:self.folder.projects parent:self];
     return _projects;
 }
 

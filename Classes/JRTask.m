@@ -19,8 +19,15 @@
     return self;
 }
 
-+(id)taskWithTask:(OmniFocusTask *)task parent:(JROFObject *)parent {
++(JRTask *)taskWithTask:(OmniFocusTask *)task parent:(JROFObject *)parent {
     return [[self alloc] initWithTask:task parent:parent];
+}
+
++(NSMutableArray *)tasksFromArray:(NSArray *)array parent:(JROFObject *)parent {
+    NSMutableArray *arr = [NSMutableArray arrayWithCapacity:array.count];
+    for (OmniFocusTask *t in array)
+        [arr addObject:[JRTask taskWithTask:t parent:parent]];
+    return arr;
 }
 
 #pragma mark Properties

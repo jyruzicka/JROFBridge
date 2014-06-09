@@ -25,16 +25,18 @@
     return [[self alloc] initWithProject:project parent:parent];
 }
 
++(NSMutableArray *)projectsFromArray:(NSArray *)array parent:(JROFObject *)parent {
+     NSMutableArray *arr = [NSMutableArray arrayWithCapacity:array.count];
+    for (OmniFocusProject *p in array)
+        [arr addObject: [JRProject projectWithProject:p parent:parent]];
+    return arr;
+}
+
 #pragma mark Getters
 
 -(NSMutableArray *)tasks {
-    if (!_tasks) {
-        _tasks = [NSMutableArray arrayWithCapacity:self.project.rootTask.flattenedTasks.count];
-        for (OmniFocusFlattenedTask *ft in self.project.rootTask.flattenedTasks) {
-            JRTask *jrt = [JRTask taskWithTask:(OmniFocusTask *)ft parent:self];
-            [_tasks addObject:jrt];
-        }
-    }
+    if (!_tasks)
+        _tasks = [JRTask tasksFromArray: self.project.rootTask.flattenedTasks parent:self];
     return _tasks;
 }
 

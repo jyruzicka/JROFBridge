@@ -20,7 +20,8 @@
 
 #pragma mark Initializer
 -(id)initWithTask:(OmniFocusTask *)task parent:(JROFObject *)parent;
-+(id)taskWithTask:(OmniFocusTask *)task parent:(JROFObject *)parent;
++(JRTask *)taskWithTask:(OmniFocusTask *)task parent:(JROFObject *)parent;
++(NSMutableArray *)tasksFromArray:(NSArray *)tasks parent:(JROFObject *)parent;
 
 #pragma mark Properties
 //Dates

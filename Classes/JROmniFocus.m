@@ -9,6 +9,7 @@
 //Need to know about folders and projects
 #import "JRFolder.h"
 #import "JRProject.h"
+#import "JRTask.h"
 
 //All OmniFocus processes start with this string
 static const NSString *kJRIdentifierPrefix = @"com.omnigroup.OmniFocus";
@@ -89,27 +90,33 @@ static NSString *kJRProcessString;
 }
 
 -(NSMutableArray *)projects {
-    if (!_projects) {
-        _projects = [NSMutableArray array];
-        for (OmniFocusProject *p in self.application.defaultDocument.projects) {
-            JRProject *jrp = [JRProject projectWithProject:p parent:nil];
-            [_projects addObject:jrp];
-        }
-    }
+    if (!_projects)
+        _projects = [JRProject projectsFromArray:self.application.defaultDocument.projects parent:nil];
+    return _projects;
+}
+
+-(NSMutableArray *)flattenedProjects {
+    if (!_projects)
+        _projects = [JRProject projectsFromArray:self.application.defaultDocument.flattenedProjects parent:nil];
     return _projects;
 }
 
 -(NSMutableArray *)folders {
     if (!_folders)
-        _folders = [JRFolder foldersFromArray: self.application.defaultDocument.folders parent: nil excluding self.excludeFolders];
-
+        _folders = [JRFolder foldersFromArray: self.application.defaultDocument.folders parent: nil excluding: self.excludedFolders];
     return _folders;
 }
 
 -(NSMutableArray *)flattenedFolders {
     if (!_flattenedFolders)
-        _folders = [JRFolder foldersFromArray: self.application.defaultDocument.flattenedFolders parent: nil excluding self.excludeFolders];
+        _folders = [JRFolder foldersFromArray: self.application.defaultDocument.flattenedFolders parent: nil excluding: self.excludedFolders];
     return _flattenedFolders;        
+}
+
+-(NSMutableArray *)flattenedTasks {
+    if (!_flattenedTasks)
+        _flattenedTasks = [JRTask tasksFromArray: self.application.defaultDocument.flattenedTasks parent: nil];
+    return _flattenedTasks;
 }
 
 -(void)each:(void (^)(JROFObject *))function {
