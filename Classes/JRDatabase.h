@@ -15,6 +15,8 @@
 }
 
 @property NSString *location;
+@property NSUInteger projectsRecorded;
+@property NSUInteger tasksRecorded;
 
 -(id)initWithLocation:(NSString *)location;
 +(id)databaseWithLocation:(NSString *)location;
@@ -23,11 +25,8 @@
 
 -(FMDatabase *)database;
 
-
+-(NSError *)purgeDatabase;
 -(NSError *)saveOFObject:(JROFObject *)o;
 -(NSError *)saveTask:(JRTask *)t;
 -(NSError *)saveProject:(JRProject *)p;
-
--(NSUInteger)projectsRecorded;
--(NSUInteger)tasksRecorded;
 @end

@@ -23,14 +23,14 @@ static NSString *kJRProjectsInsert = @"INSERT INTO projects (name,ancestors,comp
 static NSString *kJRTasksUpdate = @"UPDATE tasks SET name=?,projectID=?,projectName=?,ancestors=?,completionDate=?,creationDate=? WHERE ofid=?;";
 static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectName,ancestors,completionDate,creationDate,ofid) VALUES (?,?,?,?,?,?,?);";
 
-NSUInteger kJRProjectsRecorded = 0;
-NSUInteger kJRTasksRecorded = 0;
-
 @implementation JRDatabase
 
 -(id)initWithLocation:(NSString *)location {
-    if (self = [super init])
+    if (self = [super init]) {
         self.location = location;
+        self.projectsRecorded = 0;
+        self.tasksRecorded = 0;
+    }
     return self;
 }
 
@@ -45,10 +45,10 @@ NSUInteger kJRTasksRecorded = 0;
 -(BOOL)isLegal {
     NSFileManager *fm = [NSFileManager defaultManager];
 
-    NSString *kanbanPath = [self.location stringByStandardizingPath];
+    NSString *path = [self.location stringByStandardizingPath];
     
     //Check dir exists
-    NSArray *dirComponents = [kanbanPath pathComponents];
+    NSArray *dirComponents = [path pathComponents];
     NSIndexSet *dirSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, dirComponents.count-1)];
     NSString *dir = [[dirComponents objectsAtIndexes:dirSet] componentsJoinedByString:@"/"];
     
@@ -64,10 +64,10 @@ NSUInteger kJRTasksRecorded = 0;
 -(FMDatabase *)database {
     if (!_database) {
         NSFileManager *fm = [NSFileManager defaultManager];
-        NSString *kanbanPath = [self.location stringByStandardizingPath];
+        NSString *path = [self.location stringByStandardizingPath];
         
-        BOOL newDB = (![fm fileExistsAtPath:kanbanPath]);
-        _database = [FMDatabase databaseWithPath:kanbanPath];
+        BOOL newDB = (![fm fileExistsAtPath:path]);
+        _database = [FMDatabase databaseWithPath:path];
         [_database open];
         if (newDB) [self populateDatabase];
     }
@@ -75,6 +75,13 @@ NSUInteger kJRTasksRecorded = 0;
 }
 
 #pragma mark - Database methods
+-(NSError *)purgeDatabase {
+    NSError *err;
+    [self.database update:@"DELETE FROM projects" withErrorAndBindings:&err];
+    [self.database update:@"DELETE FROM tasks" withErrorAndBindings:&err];
+    return err;
+}
+
 -(NSError *)saveOFObject:(JROFObject *)o {
     if ([o isKindOfClass:[JRTask class]])
         return [self saveTask:(JRTask *)o];
@@ -91,13 +98,10 @@ NSUInteger kJRTasksRecorded = 0;
 }
 
 -(NSError *)saveTask:(JRTask *)t {
+    // UPDATE required?
     NSUInteger count = [self.database intForQuery:@"SELECT COUNT(*) FROM tasks WHERE ofid=?",t.id];
-    NSString *query;
-    if (count > 0) // UPDATE required
-        query = kJRTasksUpdate;
-    else
-        query = kJRTasksInsert;
-    
+    NSString *query = (count > 0 ? kJRTasksUpdate : kJRTasksInsert) 
+        
     NSArray *args = @[
                      t.name,
                      t.projectID,
@@ -110,19 +114,16 @@ NSUInteger kJRTasksRecorded = 0;
     if (![self.database executeUpdate:query withArgumentsInArray:args])
         return [self.database lastError];
     else {
-        kJRTasksRecorded++;
+        self.tasksRecorded += 1;
         return nil;
     }
 }
 
 -(NSError *)saveProject:(JRProject *)p {
+    // UPDATE required?
     NSUInteger count = [self.database intForQuery:@"SELECT COUNT(*) FROM projects WHERE ofid=?",p.id];
-    NSString *query;
-    if (count > 0) // UPDATE required
-        query = kJRProjectsUpdate;
-    else
-        query = kJRProjectsInsert;
-    
+    NSString *query = (count > 0 ? kJRProjectsUpdate : kJRProjectsInsert);
+        
     NSArray *args = @[
                       p.name,
                       p.ancestry,
@@ -133,15 +134,10 @@ NSUInteger kJRTasksRecorded = 0;
     if (![self.database executeUpdate:query withArgumentsInArray:args])
         return [self.database lastError];
     else {
-        kJRProjectsRecorded++;
+        self.projectsRecorded += 1;
         return nil;
     }
 }
-
-#pragma mark Records
--(NSUInteger)projectsRecorded {return kJRProjectsRecorded; }
--(NSUInteger)tasksRecorded {return kJRTasksRecorded; }
-
 
 #pragma mark - Private methods
 -(void)populateDatabase {
