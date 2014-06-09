@@ -100,7 +100,7 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
 -(NSError *)saveTask:(JRTask *)t {
     // UPDATE required?
     NSUInteger count = [self.database intForQuery:@"SELECT COUNT(*) FROM tasks WHERE ofid=?",t.id];
-    NSString *query = (count > 0 ? kJRTasksUpdate : kJRTasksInsert) 
+    NSString *query = (count > 0 ? kJRTasksUpdate : kJRTasksInsert);
         
     NSArray *args = @[
                      t.name,
