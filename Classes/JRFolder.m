@@ -33,7 +33,7 @@ static NSArray *kJRExcludedFolders;
 }
 
 +(NSArray *)foldersFromArray:(NSArray *)array parent:(id)parent excluding:(NSArray *)exclusions {
-    NSMutableArray *arr = [NSMutableArray arrayWithCapacity:array.size];
+    NSMutableArray *arr = [NSMutableArray arrayWithCapacity:array.count];
     for (OmniFocusFolder *f in array) {
         if ([exclusions containsObject: f.name]) continue;
         [arr addObject:[JRFolder folderWithFolder:f parent:parent]];
