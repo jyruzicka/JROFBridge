@@ -12,7 +12,7 @@
 @interface JRTask : JROFObject {
     NSString *_name, *_id;
     NSString *_projectName, *_projectID;
-    NSDate *_creationDate, *_completionDate;
+    NSDate *_creationDate, *_completionDate, *_deferredDate;
     BOOL _completed;
 }
 
@@ -23,9 +23,15 @@
 +(id)taskWithTask:(OmniFocusTask *)task parent:(JROFObject *)parent;
 
 #pragma mark Properties
+//Dates
 -(NSDate *)creationDate;
+-(NSDate *)deferredDate;
 -(NSDate *)completionDate;
+
+//Other
 -(BOOL)completed;
+
+//Project stuff
 -(NSString *)projectName;
 -(NSString *)projectID;
 @end

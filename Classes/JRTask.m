@@ -23,7 +23,7 @@
 }
 
 #pragma mark Properties
-
+//Dates
 -(NSDate *)creationDate {
     if (!_creationDate) _creationDate = self.task.creationDate;
     return _creationDate;
@@ -34,6 +34,16 @@
     
     if (!_completionDate) _completionDate = [self.task.completionDate get];
     return _completionDate;
+}
+
+-(NSDate *)deferredDate {
+    if (!_deferredDate) {
+        if (JROmniFocus.instance.version == JROmniFocusVersion1)
+            _deferredDate = [self.task.startDate get];
+        else
+            _deferredDate = [self.task.deferDate get];
+    }
+    return _deferredDate;
 }
 
 -(BOOL)completed {
@@ -60,10 +70,6 @@
 -(NSString *)id {
     if (!_id) _id = self.task.id;
     return _id;
-}
-
--(BOOL)shouldBeRecorded {
-    return self.completed;
 }
 
 @end

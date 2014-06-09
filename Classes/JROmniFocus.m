@@ -1,9 +1,7 @@
-//
 //  JROmniFocus.m
 //
 //  Created by Jan-Yves on 6/06/14.
 //  Copyright (c) 2014 Jan-Yves Ruzicka. All rights reserved.
-//
 
 #import "JROmniFocus.h"
 #import "OmniFocus.h"
@@ -12,8 +10,8 @@
 #import "JRFolder.h"
 #import "JRProject.h"
 
-//All OmniFocus2 processes start with this string
-static const NSString *kJRIdentifierPrefix = @"com.omnigroup.OmniFocus2";
+//All OmniFocus processes start with this string
+static const NSString *kJRIdentifierPrefix = @"com.omnigroup.OmniFocus";
 
 //Store instance of OmniFocus
 static JROmniFocus *kJRInstance;
@@ -28,7 +26,8 @@ static NSString *kJRProcessString;
 -(id)init {
     if (!kJRInstance && [JROmniFocus isRunning]) {
         self = [super init];
-        self.application = [JROmniFocus application];
+        self.processString = [JROmniFocus processString];
+        self.application = [JROmniFocus applicationFromString:self.processString];
     }
     else
         self = kJRInstance;
@@ -63,22 +62,29 @@ static NSString *kJRProcessString;
     return (![self.processString isEqualToString:@""]);
 }
 
-+(OmniFocusApplication *)application {
++(OmniFocusApplication *)applicationFromString:(NSString *)string {
     if ([self isRunning])
-        return (OmniFocusApplication *) [SBApplication applicationWithBundleIdentifier:self.processString];
+        return (OmniFocusApplication *) [SBApplication applicationWithBundleIdentifier:string];
     else
         return nil;
 }
 
 #pragma mark - Instance methods and properties
 
--(BOOL)isPro {
-    @try {
-        [self.application defaultDocument];
-        return YES;
-    }
-    @catch (NSException *exception) {
-        return NO;
+-(JROmniFocusVersion)version {
+    if (!version) {
+        NSRange of2 = [self.processString rangeOfString:(NSString *)@"com.omnigroup.OmniFocus2"];
+        if (of2.location == NSNotFound)
+            version = JROmniFocusVersion1;
+        else {
+            @try {
+                [self.application defaultDocument];
+                return JROmniFocusVersion2Pro;
+            }
+            @catch (NSException *exception) {
+                return JROmniFocusVersion2;
+            }
+        }
     }
 }
 

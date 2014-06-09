@@ -1,6 +1,4 @@
-//
 //  JROmniFocus.h
-//  of-store
 //
 // Acts as a wrapper object for omnifocus itself.
 // Used to determine which version of OmniFocus is running
@@ -10,19 +8,21 @@
 // Singleton object. Get the current application with
 // +[OmniFocus instance];
 //
-//  Created by Jan-Yves on 6/06/14.
 //  Copyright (c) 2014 Jan-Yves Ruzicka. All rights reserved.
-//
 
 #import <Foundation/Foundation.h>
 
 @class JROFObject, OmniFocusApplication;
 
+typedef enum {JROmniFocusVersion1, JROmniFocusVersion2, JROmniFocusVersion2Pro} JROmniFocusVersion;
+
 @interface JROmniFocus : NSObject {
     NSMutableArray *_projects, *_folders;
+    JROmniFocusVersion version;
 }
 
 @property OmniFocusApplication *application;
+@property NSString *processString;
 @property NSArray *excludedFolders;
 
 #pragma mark Initializers and factories
@@ -30,7 +30,8 @@
 +(id)instance;
 
 #pragma mark Instance methods and properties
--(BOOL)isPro;
+-(JROmniFocusVersion)version;
+
 -(NSMutableArray *)folders;
 -(NSMutableArray *)projects;
 
