@@ -20,7 +20,7 @@
 
 #pragma mark Initializer
 -(id)initWithProject:(OmniFocusProject *)project parent:(JROFObject *)parent;
-+(id)projectWithProject:(OmniFocusProject *)project parent:(JROFObject *)parent;
++(JRProject *)projectWithProject:(OmniFocusProject *)project parent:(JROFObject *)parent;
 
 #pragma mark Getters
 -(NSMutableArray *)tasks;

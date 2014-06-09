@@ -19,6 +19,8 @@
 #pragma mark Initializer
 -(id)initWithFolder:(OmniFocusFolder *)folder parent:(JROFObject *)parent;
 +(id)folderWithFolder:(OmniFocusFolder *)folder parent:(JROFObject *)parent;
++(NSArray *)foldersFromArray:(NSArray *)array parent:(id)parent;
++(NSArray *)foldersFromArray:(NSArray *)array parent:(id)parent excluding:(NSArray *)exclusions;
 
 #pragma mark Getters
 -(NSMutableArray *)folders;

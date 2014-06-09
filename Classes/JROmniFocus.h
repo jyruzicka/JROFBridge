@@ -18,6 +18,7 @@ typedef enum {JROmniFocusVersion1, JROmniFocusVersion2, JROmniFocusVersion2Pro} 
 
 @interface JROmniFocus : NSObject {
     NSMutableArray *_projects, *_folders;
+    NSMutableArray *_flattenedProjects, *_flattenedFolders, *_flattenedTasks;
     JROmniFocusVersion version;
 }
 
@@ -34,6 +35,10 @@ typedef enum {JROmniFocusVersion1, JROmniFocusVersion2, JROmniFocusVersion2Pro} 
 
 -(NSMutableArray *)folders;
 -(NSMutableArray *)projects;
+
+-(NSMutableArray *)flattenedFolders;
+-(NSMutableArray *)flattenedProjects;
+-(NSMutableArray *)flattenedTasks;
 
 //Iterate through all objects in the tree
 -(void)each:(void (^)(JROFObject *))function;

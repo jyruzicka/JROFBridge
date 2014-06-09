@@ -100,17 +100,16 @@ static NSString *kJRProcessString;
 }
 
 -(NSMutableArray *)folders {
-    if (!_folders) {
-        _folders = [NSMutableArray array];
-        for (OmniFocusFolder *f in self.application.defaultDocument.folders) {
-            //Skip top-level folders with specific names
-            if ([self.excludedFolders containsObject:f.name]) continue;
-            
-            JRFolder *jrf = [JRFolder folderWithFolder:f parent:nil];
-            [_folders addObject:jrf];
-        }
-    }
+    if (!_folders)
+        _folders = [JRFolder foldersFromArray: self.application.defaultDocument.folders parent: nil excluding self.excludeFolders];
+
     return _folders;
+}
+
+-(NSMutableArray *)flattenedFolders {
+    if (!_flattenedFolders)
+        _folders = [JRFolder foldersFromArray: self.application.defaultDocument.flattenedFolders parent: nil excluding self.excludeFolders];
+    return _flattenedFolders;        
 }
 
 -(void)each:(void (^)(JROFObject *))function {

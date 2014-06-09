@@ -28,6 +28,19 @@ static NSArray *kJRExcludedFolders;
     return [[self alloc] initWithFolder:folder parent:parent];
 }
 
++(NSArray *)foldersFromArray:(NSArray *)array parent:(id)parent{
+    return [self foldersFromArray:array parent:parent excluding:nil];
+}
+
++(NSArray *)foldersFromArray:(NSArray *)array parent:(id)parent excluding:(NSArray *)exclusions {
+    NSMutableArray *arr = [NSMutableArray arrayWithCapacity:array.size];
+    for (OmniFocusFolder *f in array) {
+        if ([exclusions containsObject: f.name]) continue;
+        [arr addObject:[JRFolder folderWithFolder:f parent:parent]];
+    }
+    return arr;
+}
+
 #pragma mark Getters
 -(NSMutableArray *)folders {
     if (!_folders) {
