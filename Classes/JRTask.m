@@ -7,6 +7,7 @@
 //
 
 #import "JRTask.h"
+#import "JROmniFocus.h"
 #import "OmniFocus.h"
 
 @implementation JRTask
@@ -41,7 +42,7 @@
         if (JROmniFocus.instance.version == JROmniFocusVersion1)
             _deferredDate = [self.task.startDate get];
         else
-            _deferredDate = [self.task.deferDate get];
+            _deferredDate = [self.task.deferredDate get];
     }
     return _deferredDate;
 }
