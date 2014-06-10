@@ -119,10 +119,18 @@ static NSString *kJRProcessString;
     return _flattenedTasks;
 }
 
--(void)each:(void (^)(JROFObject *))function {
+-(void)eachTask:(void (^)(JROFObject *))function {
     for (JRFolder *f in self.folders)
-        [f each:function];
+        [f eachTask:function];
     for (JRProject *p in self.projects)
-        [p each:function];
+        [p eachTask:function];
 }
+
+-(void)eachProject:(void (^)(JROFObject *))function {
+    for (JRFolder *f in self.folders)
+        [f eachProject:function];
+    for (JRProject *p in self.projects)
+        function(p);
+}
+
 @end

@@ -7,7 +7,7 @@
 //
 
 #import "JROFObject.h"
-@class OmniFocusFolder;
+@class OmniFocusFolder, JRTask, JRProject;
 
 @interface JRFolder : JROFObject {
     NSString *_name, *_id;
@@ -25,4 +25,8 @@
 #pragma mark Getters
 -(NSMutableArray *)folders;
 -(NSMutableArray *)projects;
+
+#pragma mark Traversing the tree
+-(void)eachTask:(void (^)(JRTask *))function;
+-(void)eachProject:(void (^)(JRProject *))function;
 @end

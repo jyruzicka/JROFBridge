@@ -6,7 +6,7 @@
 //
 
 #import "JROFObject.h"
-@class OmniFocusProject;
+@class OmniFocusProject,JRTask;
 
 @interface JRProject : JROFObject {
     NSString *_name, *_id;
@@ -30,4 +30,7 @@
 -(NSDate *)creationDate;
 -(NSDate *)completionDate;
 -(BOOL)completed;
+
+#pragma mark Traversing the tree
+-(void)eachTask:(void (^)(JRTask *))function;
 @end

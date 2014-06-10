@@ -25,5 +25,5 @@
 -(BOOL)shouldBeRecorded;
 
 -(NSString *)ancestry;
--(void)each:(void (^)(JROFObject *))function;
+-(BOOL)hasAncestor:(NSString *)ancestor;
 @end

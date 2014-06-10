@@ -75,10 +75,10 @@
     return self.completed;
 }
 
--(void)each:(void (^)(JROFObject *))function {
-    function(self);
+#pragma mark Traversing the tree
+-(void)eachTask:(void (^)(JRTask *))function {
     for (JRTask *t in self.tasks)
-        [t each:function];
+        function(t);
 }
 
 @end

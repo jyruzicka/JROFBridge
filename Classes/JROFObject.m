@@ -40,6 +40,10 @@
         return @"";
 }
 
+-(BOOL)hasAncestor:(NSString *)ancestor {
+    return ([[self.ancestry componentsSeparatedByString:@","] containsObject: ancestor]);
+}
+
 -(void)each:(void (^)(JROFObject *))function {
     function(self);
 }

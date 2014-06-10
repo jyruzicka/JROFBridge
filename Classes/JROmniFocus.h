@@ -12,7 +12,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class JROFObject, OmniFocusApplication;
+@class JROFObject, OmniFocusApplication, JRProject, JRTask;
 
 typedef enum {JROmniFocusVersion1, JROmniFocusVersion2, JROmniFocusVersion2Pro} JROmniFocusVersion;
 
@@ -41,6 +41,7 @@ typedef enum {JROmniFocusVersion1, JROmniFocusVersion2, JROmniFocusVersion2Pro} 
 -(NSMutableArray *)flattenedTasks;
 
 //Iterate through all objects in the tree
--(void)each:(void (^)(JROFObject *))function;
+-(void)eachTask:(void (^)(JRTask *))function;
+-(void)eachProject:(void (^)(JRProject *))function;
 
 @end

@@ -65,11 +65,19 @@ static NSArray *kJRExcludedFolders;
     return _id;
 }
 
--(void)each:(void (^)(JROFObject *))function {
-    function(self);
+#pragma mark Traversing the tree
+-(void)eachTask:(void (^)(JRTask *))function {
     for (JRFolder *f in self.folders)
-        [f each:function];
+        [f eachTask:function];
     for (JRProject *p in self.projects)
-        [p each:function];
+        [f eachTask:function];
 }
+
+-(void)eachProject:(void (^)(JRProject *))function {
+    for (JRFolder *f in self.folders)
+        [f eachProject:function];
+    for (JRProject *p in self.projects)
+        function(p);
+}
+
 @end
