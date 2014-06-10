@@ -16,8 +16,8 @@
 #import <FMDB/FMDatabaseAdditions.h>
 
 //Constants
-static NSString *kJRProjectsUpdate = @"UPDATE projects SET name=?,ancestors=?,completionDate=?,creationDate=? WHERE ofid=?;";
-static NSString *kJRProjectsInsert = @"INSERT INTO projects (name,ancestors,completionDate,creationDate,ofid) VALUES (?,?,?,?,?);";
+static NSString *kJRProjectsUpdate = @"UPDATE projects SET name=?,ancestors=?,completionDate=?,creationDate=? deferredDate=? WHERE ofid=?;";
+static NSString *kJRProjectsInsert = @"INSERT INTO projects (name,ancestors,completionDate,creationDate,deferredDate,ofid) VALUES (?,?,?,?,?);";
 
 static NSString *kJRTasksUpdate = @"UPDATE tasks SET name=?,projectID=?,projectName=?,ancestors=?,completionDate=?,creationDate=? WHERE ofid=?;";
 static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectName,ancestors,completionDate,creationDate,ofid) VALUES (?,?,?,?,?,?,?);";
@@ -177,6 +177,7 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
                       p.ancestry,
                       (p.completionDate ? p.completionDate : @-1),
                       p.creationDate,
+                      (p.deferredDate ? p.deferredDate : @-1),
                       p.id
                     ];
     
@@ -192,7 +193,7 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
 -(void)populateDatabase {
     //Tasks
     if ([self requiresType: JRDatabaseTasks])
-        [self.database update:@"CREATE TABLE tasks (id INTEGER PRIMARY KEY, name STRING, ofid STRING, projectID STRING, projectName STRING, ancestors STRING, creationDate DATE, completionDate DATE);" withErrorAndBindings:nil];
+        [self.database update:@"CREATE TABLE tasks (id INTEGER PRIMARY KEY, name STRING, ofid STRING, projectID STRING, projectName STRING, ancestors STRING, creationDate DATE, completionDate DATE, deferredDate DATE);" withErrorAndBindings:nil];
     //Projects
     if ([self requiresType: JRDatabaseProjects])
         [self.database update:@"CREATE TABLE projects (id INTEGER PRIMARY KEY, name STRING, ofid STRING, ancestors STRING, creationDate DATE, completionDate DATE);" withErrorAndBindings:nil];
