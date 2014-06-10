@@ -62,7 +62,8 @@
 }
 
 -(BOOL)isWaiting {
-    return ([((OmniFocusContext *) self.task.context).name rangeOfString:@"Waiting"].location == 0);
+    OmniFocusContext *c = [self.task.context get];
+    return (c && [c.name rangeOfString:@"Waiting"].location == 0);
 }
 
 -(NSString *)projectName {
