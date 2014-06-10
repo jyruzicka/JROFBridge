@@ -56,13 +56,13 @@
 
 -(NSString *)status {
     if (!_status) {
-        JRTask *t;
+        JRTask *nextTask;
         switch (self.project.status) {
         case OmniFocusProjectStatusActive:
-            t = [JRTask taskWithTask:[self.project.nextTask get] parent:self];
-            if (t && t.isWaiting)
+            nextTask = [JRTask taskWithTask[self.project.rootTask.tasks[0] get] parent:self];
+            if (nextTask && nextTask.isWaiting)
                 _status = @"Waiting on";
-            else if (self.deferredDate || t.deferredDate)
+            else if (self.deferredDate || nextTask.deferredDate)
                 _status = @"Deferred";
             else
                 _status = @"Active";
