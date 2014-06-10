@@ -107,7 +107,7 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
                      t.projectID,
                      t.projectName,
                      t.ancestry,
-                     (t.completionDate || -1),
+                     (t.completionDate || @(-1)),
                      t.creationDate,
                      t.id];
     
