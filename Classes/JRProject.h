@@ -34,4 +34,8 @@
 
 #pragma mark Traversing the tree
 -(void)eachTask:(void (^)(JRTask *))function;
+
+#pragma mark Export types
++(NSDictionary *)columns;
+-(NSDictionary *)asDict;
 @end

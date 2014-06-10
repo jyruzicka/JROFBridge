@@ -88,4 +88,30 @@
     return _id;
 }
 
+#pragma mark Export types
+
++(NSDictionary *)columns {
+    return @{
+        @"name": @"STRING",
+        @"projectID": @"STRING",
+        @"projectName": @"STRING",
+        @"ancestors": @"STRING",
+        @"completionDate": @"DATE",
+        @"creationDate": @"DATE",
+        @"ofid": @"STRING"
+    };
+}
+
+-(NSDictionary *)asDict {
+    return @{
+        @"name": self.name,
+        @"projectID": self.projectID,
+        @"projectName": self.projectName,
+        @"ancestors": self.ancestry,
+        @"completionDate": (self.completionDate ? self.completionDate : @-1),
+        @"creationDate": self.creationDate,
+        @"ofid": self.id
+    };
+}
+
 @end

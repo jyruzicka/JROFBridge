@@ -1,9 +1,3 @@
-//
-//  JRDatabase.m
-//
-//  Created by Jan-Yves on 3/12/13.
-//  Copyright (c) 2013 Jan-Yves Ruzicka. All rights reserved.
-
 #import "JRDatabase.h"
 
 //Objects to save
@@ -12,6 +6,7 @@
 #import "JRTask.h"
 
 //Database
+#import "JRDatabaseQuery.h"
 #import <FMDB/FMDatabase.h>
 #import <FMDB/FMDatabaseAdditions.h>
 
@@ -111,10 +106,12 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
 -(NSError *)purgeDatabase {
     NSError *err;
     NSFileManager *fm = [NSFileManager defaultManager];
-    [fm removeItemAtPath:self.location error:&err];
+    
+    if ([fm fileExistsAtPath:self.location])
+        [fm removeItemAtPath:self.location error:&err];
 
     if (!err)
-        [self populateDatabase];
+        _database = nil;
 
     return err;
 }
@@ -137,29 +134,17 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
 -(NSError *)saveTask:(JRTask *)t {
     //Check: are we trying to save tasks to a non-task database?
     if (![self requiresType:JRDatabaseTasks])
-        return [NSError errorWithDomain: NSMachErrorDomain
+        return [NSError errorWithDomain:NSMachErrorDomain
                                    code:1
-                               userInfo: @{NSLocalizedDescriptionKey: @"Trying to save a task to a non-task database."}];
+                               userInfo:@{NSLocalizedDescriptionKey: @"Trying to save a task to a non-task database."}];
 
-    // UPDATE required?
-    NSUInteger count = [self.database intForQuery:@"SELECT COUNT(*) FROM tasks WHERE ofid=?",t.id];
-    NSString *query = (count > 0 ? kJRTasksUpdate : kJRTasksInsert);
-        
-    NSArray *args = @[
-                     t.name,
-                     t.projectID,
-                     t.projectName,
-                     t.ancestry,
-                     (t.completionDate ? t.completionDate : @-1),
-                     t.creationDate,
-                     t.id];
-    
-    if (![self.database executeUpdate:query withArgumentsInArray:args])
-        return [self.database lastError];
-    else {
-        self.tasksRecorded += 1;
-        return nil;
-    }
+    //Build query
+    JRDatabaseQuery *q = [JRDatabaseQuery queryForTable:@"tasks" values:t.asDict];
+    q.primaryKey = @"ofid";
+
+    NSError *err = [self updateDatabaseWithQuery:q];
+    if (!err) self.tasksRecorded += 1;
+    return err;
 }
 
 -(NSError *)saveProject:(JRProject *)p {
@@ -169,40 +154,53 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
                                    code:1
                                userInfo: @{NSLocalizedDescriptionKey: @"Trying to save a project to a non-project database."}];
 
-    // UPDATE required?
-    NSUInteger count = [self.database intForQuery:@"SELECT COUNT(*) FROM projects WHERE ofid=?",p.id];
-    NSString *query = (count > 0 ? kJRProjectsUpdate : kJRProjectsInsert);
-        
-    NSArray *args = @[
-                      p.name,
-                      p.ancestry,
-                      p.status,
-                      (p.completionDate ? p.completionDate : @-1),
-                      p.creationDate,
-                      (p.deferredDate ? p.deferredDate : @-1),
-                      p.id
-                    ];
-    
-    if (![self.database executeUpdate:query withArgumentsInArray:args])
-        return [self.database lastError];
-    else {
-        self.projectsRecorded += 1;
-        return nil;
-    }
+    //Build query
+    JRDatabaseQuery *q = [JRDatabaseQuery queryForTable:@"projects" values: p.asDict];
+    q.primaryKey = @"ofid";
+
+    NSError *err = [self updateDatabaseWithQuery:q];
+    if (!err) self.projectsRecorded += 1;
+    return err;
 }
 
 #pragma mark - Private methods
 -(void)populateDatabase {
+    JRDatabaseQuery *q;
     //Tasks
-    if ([self requiresType: JRDatabaseTasks])
-        [self.database update:@"CREATE TABLE tasks (id INTEGER PRIMARY KEY, name STRING, ofid STRING, projectID STRING, projectName STRING, ancestors STRING, creationDate DATE, completionDate DATE, deferredDate DATE);" withErrorAndBindings:nil];
+    if ([self requiresType: JRDatabaseTasks]) {
+        q = [JRDatabaseQuery queryForTable:@"tasks" values:[JRTask columns]];
+        q.primaryKey = @"ofid";
+        [self.database update:q.create withErrorAndBindings:nil];
+    }
     //Projects
-    if ([self requiresType: JRDatabaseProjects])
-        [self.database update:@"CREATE TABLE projects (id INTEGER PRIMARY KEY, name STRING, ofid STRING, ancestors STRING, status STRING,creationDate DATE, completionDate DATE, deferredDate DATE);" withErrorAndBindings:nil];
+    if ([self requiresType: JRDatabaseProjects]) {
+        q = [JRDatabaseQuery queryForTable:@"projects" values:[JRProject columns]];
+        q.primaryKey = @"ofid";
+        [self.database update:q.create withErrorAndBindings:nil];   
+    }
 }
 
 -(BOOL)requiresType:(JRDatabaseType) type {
     return ((self.type & type) == type);
+}
+
+-(NSError *)updateDatabaseWithQuery:(JRDatabaseQuery *)q {
+    //Count
+    NSArray *countArgs;
+    NSString *countQ = [q count:&countArgs];
+    NSUInteger count = [self.database intForQuery:countQ, countArgs];
+
+    NSArray *queryArgs;
+    NSString *queryString;
+    if (count > 0) //Update
+        queryString = [q update:&queryArgs];
+    else
+        queryString = [q insert:&queryArgs];
+
+    if (![self.database executeUpdate:queryString withArgumentsInArray:queryArgs])
+        return [self.database lastError];
+    else
+        return nil;
 }
 
 @end

@@ -35,4 +35,8 @@
 //Project stuff
 -(NSString *)projectName;
 -(NSString *)projectID;
+
+#pragma mark Export types
++(NSDictionary *)columns;
+-(NSDictionary *)asDict;
 @end

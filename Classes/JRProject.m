@@ -56,13 +56,12 @@
 
 -(NSString *)status {
     if (!_status) {
-        JRTask *nextTask;
+        JRTask *nextTask = (self.tasks.count > 0 ? self.tasks[0] : nil);
         switch (self.project.status) {
         case OmniFocusProjectStatusActive:
-            nextTask = [JRTask taskWithTask:[self.project.rootTask.flattenedTasks[0] get] parent:self];
             if (nextTask && nextTask.isWaiting)
                 _status = @"Waiting on";
-            else if (self.deferredDate || nextTask.deferredDate)
+            else if (self.deferredDate || (nextTask && nextTask.deferredDate))
                 _status = @"Deferred";
             else
                 _status = @"Active";
@@ -100,6 +99,9 @@
             _deferredDate = [self.project.startDate get];
         else
             _deferredDate = [self.project.deferDate get];
+
+        if (!_deferredDate && self.tasks.count > 0)//Also check first task
+            _deferredDate = ((JRTask *)self.tasks[0]).deferredDate;
     }
     return _deferredDate;
 }
@@ -112,6 +114,33 @@
 -(void)eachTask:(void (^)(JRTask *))function {
     for (JRTask *t in self.tasks)
         function(t);
+}
+
+#pragma mark Export types
++(NSDictionary *)columns {
+    return @{
+        @"name": @"STRING",
+        @"ancestors": @"STRING",
+        @"status": @"STRING",
+        @"completionDate": @"DATE",
+        @"creationDate": @"DATE",
+        @"deferredDate": @"DATE",
+        @"ofid": @"STRING",
+        @"numberOfTasks": @"INTEGER"
+    };
+}
+
+-(NSDictionary *)asDict {
+    return @{
+        @"name": self.name,
+        @"ancestors": self.ancestry,
+        @"status": self.status,
+        @"completionDate": (self.completionDate ? self.completionDate : @-1),
+        @"creationDate": self.creationDate,
+        @"deferredDate": (self.deferredDate ? self.deferredDate : @-1),
+        @"ofid": self.id,
+        @"numberOfTasks": @(self.tasks.count)
+    };
 }
 
 @end
