@@ -9,6 +9,8 @@
 @class JROFObject,  JRProject, JRTask;
 @class FMDatabase;
 
+typedef enum {JRDatabaseProjects=1,JRDatabaseTasks=2} JRDatabaseType;
+typedef enum {JRDatabaseExactMatch,JRDatabaseSubset,JRDatabaseDoesNotExist,JRDatabaseDoesNotMatch} JRDatabaseOverlap;
 
 @interface JRDatabase : NSObject {
     FMDatabase *_database;
@@ -18,10 +20,16 @@
 @property NSUInteger projectsRecorded;
 @property NSUInteger tasksRecorded;
 
--(id)initWithLocation:(NSString *)location;
-+(id)databaseWithLocation:(NSString *)location;
+@property (readonly) JRDatabaseType type;
 
--(BOOL)isLegal;
+-(id)initWithLocation:(NSString *)location type:(JRDatabaseType)type;
++(id)databaseWithLocation:(NSString *)location type:(JRDatabaseType)type;
+
+//Can this database exist in the filesystem without creating additional folders?
+-(BOOL)canExist;
+
+//Is this database correctly formatted, given the type of database we're creating?
+-(JRDatabaseOverlap)overlapWithDatabaseFile;
 
 -(FMDatabase *)database;
 

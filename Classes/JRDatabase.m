@@ -11,7 +11,6 @@
 #import "JRProject.h"
 #import "JRTask.h"
 
-
 //Database
 #import <FMDB/FMDatabase.h>
 #import <FMDB/FMDatabaseAdditions.h>
@@ -25,11 +24,12 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
 
 @implementation JRDatabase
 
--(id)initWithLocation:(NSString *)location {
+-(id)initWithLocation:(NSString *)location type:(JRDatabaseType)type {
     if (self = [super init]) {
-        self.location = location;
+        self.location = [location stringByStandardizingPath];
         self.projectsRecorded = 0;
         self.tasksRecorded = 0;
+        _type = type;
     }
     return self;
 }
@@ -38,17 +38,15 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
     if (_database) [_database close];
 }
 
-+(id)databaseWithLocation:(NSString *)location {
-    return [[self alloc] initWithLocation:location];
++(id)databaseWithLocation:(NSString *)location type:(JRDatabaseType)type {
+    return [[self alloc] initWithLocation:location type:type];
 }
 
--(BOOL)isLegal {
+-(BOOL)canExist {
     NSFileManager *fm = [NSFileManager defaultManager];
-
-    NSString *path = [self.location stringByStandardizingPath];
     
     //Check dir exists
-    NSArray *dirComponents = [path pathComponents];
+    NSArray *dirComponents = [self.location pathComponents];
     NSIndexSet *dirSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, dirComponents.count-1)];
     NSString *dir = [[dirComponents objectsAtIndexes:dirSet] componentsJoinedByString:@"/"];
     
@@ -60,14 +58,48 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
     return (fileExists && isDir);
 }
 
+// Is the database currently in existence here able to accept input by this database?
+// Returns:
+// - JRDatabaseExactMatch:   Contains just the right tables to support this database
+// - JRDatabaseSubset:       Contains the tables to support this database and more
+// - JRDatabaseDoesNotExist: Database doesn't even exist.
+// - JRDatabaseDoesNotMatch: Doesn't contain the right tables to support this database
+-(JRDatabaseOverlap)overlapWithDatabaseFile {
+    //Check to see if db exists
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if (![fm fileExistsAtPath:self.location])
+        return JRDatabaseDoesNotExist;
+
+    //We presume it's safe to open the file...
+    //Check to see if it has every table we need
+    FMResultSet *r = [self.database executeQuery:@"SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;"];
+    NSMutableArray *tables = [NSMutableArray array];
+    while ([r next]) [tables addObject:[r stringForColumnIndex:0]];
+
+    if ([self requiresType:JRDatabaseTasks]) {
+        if ([tables containsObject:@"tasks"])
+            [tables removeObject:@"tasks"];
+        else
+            return JRDatabaseDoesNotMatch;
+    }
+
+    if ([self requiresType:JRDatabaseProjects]) {
+        if ([tables containsObject:@"projects"])
+            [tables removeObject:@"projects"];
+        else
+            return JRDatabaseDoesNotMatch;
+    }
+
+    return (tables.count == 0 ? JRDatabaseExactMatch : JRDatabaseSubset);
+}
+
 //Database fetcher
 -(FMDatabase *)database {
     if (!_database) {
         NSFileManager *fm = [NSFileManager defaultManager];
-        NSString *path = [self.location stringByStandardizingPath];
         
-        BOOL newDB = (![fm fileExistsAtPath:path]);
-        _database = [FMDatabase databaseWithPath:path];
+        BOOL newDB = (![fm fileExistsAtPath:self.location]);
+        _database = [FMDatabase databaseWithPath:self.location];
         [_database open];
         if (newDB) [self populateDatabase];
     }
@@ -77,8 +109,12 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
 #pragma mark - Database methods
 -(NSError *)purgeDatabase {
     NSError *err;
-    [self.database update:@"DELETE FROM projects" withErrorAndBindings:&err];
-    [self.database update:@"DELETE FROM tasks" withErrorAndBindings:&err];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    [fm removeItemAtPath:self.location error:&err];
+
+    if (!err)
+        [self populateDatabase];
+
     return err;
 }
 
@@ -98,6 +134,12 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
 }
 
 -(NSError *)saveTask:(JRTask *)t {
+    //Check: are we trying to save tasks to a non-task database?
+    if (![self requiresType:JRDatabaseTasks])
+        return [NSError errorWithDomain: NSMachErrorDomain
+                                   code:1
+                               userInfo: @{NSLocalizedDescriptionKey: @"Trying to save a task to a non-task database."}];
+
     // UPDATE required?
     NSUInteger count = [self.database intForQuery:@"SELECT COUNT(*) FROM tasks WHERE ofid=?",t.id];
     NSString *query = (count > 0 ? kJRTasksUpdate : kJRTasksInsert);
@@ -120,6 +162,12 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
 }
 
 -(NSError *)saveProject:(JRProject *)p {
+    //Check: are we trying to save tasks to a non-task database?
+    if (![self requiresType:JRDatabaseProjects])
+        return [NSError errorWithDomain: NSMachErrorDomain
+                                   code:1
+                               userInfo: @{NSLocalizedDescriptionKey: @"Trying to save a project to a non-project database."}];
+
     // UPDATE required?
     NSUInteger count = [self.database intForQuery:@"SELECT COUNT(*) FROM projects WHERE ofid=?",p.id];
     NSString *query = (count > 0 ? kJRProjectsUpdate : kJRProjectsInsert);
@@ -143,9 +191,15 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
 #pragma mark - Private methods
 -(void)populateDatabase {
     //Tasks
-    [self.database update:@"CREATE TABLE tasks (id INTEGER PRIMARY KEY, name STRING, ofid STRING, projectID STRING, projectName STRING, ancestors STRING, creationDate DATE, completionDate DATE);" withErrorAndBindings:nil];
+    if ([self requiresType: JRDatabaseTasks])
+        [self.database update:@"CREATE TABLE tasks (id INTEGER PRIMARY KEY, name STRING, ofid STRING, projectID STRING, projectName STRING, ancestors STRING, creationDate DATE, completionDate DATE);" withErrorAndBindings:nil];
     //Projects
-    [self.database update:@"CREATE TABLE projects (id INTEGER PRIMARY KEY, name STRING, ofid STRING, ancestors STRING, creationDate DATE, completionDate DATE);" withErrorAndBindings:nil];
+    if ([self requiresType: JRDatabaseProjects])
+        [self.database update:@"CREATE TABLE projects (id INTEGER PRIMARY KEY, name STRING, ofid STRING, ancestors STRING, creationDate DATE, completionDate DATE);" withErrorAndBindings:nil];
+}
+
+-(BOOL)requiresType:(JRDatabaseType) type {
+    return ((self.type & type) == type);
 }
 
 @end
