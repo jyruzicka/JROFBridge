@@ -196,7 +196,7 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
         [self.database update:@"CREATE TABLE tasks (id INTEGER PRIMARY KEY, name STRING, ofid STRING, projectID STRING, projectName STRING, ancestors STRING, creationDate DATE, completionDate DATE, deferredDate DATE);" withErrorAndBindings:nil];
     //Projects
     if ([self requiresType: JRDatabaseProjects])
-        [self.database update:@"CREATE TABLE projects (id INTEGER PRIMARY KEY, name STRING, ofid STRING, ancestors STRING, creationDate DATE, completionDate DATE);" withErrorAndBindings:nil];
+        [self.database update:@"CREATE TABLE projects (id INTEGER PRIMARY KEY, name STRING, ofid STRING, ancestors STRING, creationDate DATE, completionDate DATE, deferredDate DATE);" withErrorAndBindings:nil];
 }
 
 -(BOOL)requiresType:(JRDatabaseType) type {
