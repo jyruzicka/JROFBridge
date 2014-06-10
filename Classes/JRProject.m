@@ -70,9 +70,9 @@
 -(NSDate *)deferredDate {
     if (!_deferredDate) {
         if (JROmniFocus.instance.version == JROmniFocusVersion1)
-            _deferredDate = [self.project.rootTask.startDate get];
+            _deferredDate = [self.project.startDate get];
         else
-            _deferredDate = [self.project.rootTask.deferDate get];
+            _deferredDate = [self.project.deferDate get];
     }
     return _deferredDate;
 }
