@@ -6,8 +6,10 @@
 //  Copyright (c) 2014 Jan-Yves Ruzicka. All rights reserved.
 //
 
+#import "JROmniFocus.h"
 #import "JRProject.h"
 #import "OmniFocus.h"
+
 //Children
 #import "JRTask.h"
 
@@ -63,6 +65,16 @@
     
     if (!_completionDate) _completionDate = [self.project.completionDate get];
     return _completionDate;
+}
+
+-(NSDate *)deferredDate {
+    if (!_deferredDate) {
+        if (JROmniFocus.instance.version == JROmniFocusVersion1)
+            _deferredDate = [self.project.startDate get];
+        else
+            _deferredDate = [self.project.deferredDate get];
+    }
+    return _deferredDate;
 }
 
 -(BOOL)completed {

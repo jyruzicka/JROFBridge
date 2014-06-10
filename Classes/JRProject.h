@@ -10,7 +10,7 @@
 
 @interface JRProject : JROFObject {
     NSString *_name, *_id;
-    NSDate *_creationDate, *_completionDate;
+    NSDate *_creationDate, *_completionDate, *_deferredDate;
     BOOL _completed;
     
     NSMutableArray *_tasks;
@@ -29,6 +29,7 @@
 #pragma mark Properties
 -(NSDate *)creationDate;
 -(NSDate *)completionDate;
+-(NSDate *)deferredDate;
 -(BOOL)completed;
 
 #pragma mark Traversing the tree
