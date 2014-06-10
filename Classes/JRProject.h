@@ -9,7 +9,7 @@
 @class OmniFocusProject,JRTask;
 
 @interface JRProject : JROFObject {
-    NSString *_name, *_id;
+    NSString *_name, *_id, *_status;
     NSDate *_creationDate, *_completionDate, *_deferredDate;
     BOOL _completed;
     
@@ -27,6 +27,7 @@
 -(NSMutableArray *)tasks;
 
 #pragma mark Properties
+-(NSString *)status;
 -(NSDate *)creationDate;
 -(NSDate *)completionDate;
 -(NSDate *)deferredDate;

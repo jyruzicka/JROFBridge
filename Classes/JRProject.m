@@ -54,6 +54,25 @@
     return _id;
 }
 
+-(NSString *)status {
+    if (!_status) {
+        switch (self.project.status) {
+        case OmniFocusProjectStatusActive:
+            _status = @"Active";
+            break;
+        case OmniFocusProjectStatusOnHold:
+            _status = @"On hold";
+            break;
+        case OmniFocusProjectStatusDone:
+            _status = @"Done";
+            break;
+        default:
+            _status = @"Dropped";
+        }
+    }
+    return _status;
+}
+
 
 -(NSDate *)creationDate {
     if (!_creationDate) _creationDate = self.project.creationDate;

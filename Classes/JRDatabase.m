@@ -16,8 +16,9 @@
 #import <FMDB/FMDatabaseAdditions.h>
 
 //Constants
-static NSString *kJRProjectsUpdate = @"UPDATE projects SET name=?,ancestors=?,completionDate=?,creationDate=? deferredDate=? WHERE ofid=?;";
-static NSString *kJRProjectsInsert = @"INSERT INTO projects (name,ancestors,completionDate,creationDate,deferredDate,ofid) VALUES (?,?,?,?,?,?);";
+//TKTKTK we must be able to abstract the query into its own class
+static NSString *kJRProjectsUpdate = @"UPDATE projects SET name=?,ancestors=?,status=?completionDate=?,creationDate=? deferredDate=? WHERE ofid=?;";
+static NSString *kJRProjectsInsert = @"INSERT INTO projects (name,ancestors,status,completionDate,creationDate,deferredDate,ofid) VALUES (?,?,?,?,?,?,?);";
 
 static NSString *kJRTasksUpdate = @"UPDATE tasks SET name=?,projectID=?,projectName=?,ancestors=?,completionDate=?,creationDate=? WHERE ofid=?;";
 static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectName,ancestors,completionDate,creationDate,ofid) VALUES (?,?,?,?,?,?,?);";
@@ -175,6 +176,7 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
     NSArray *args = @[
                       p.name,
                       p.ancestry,
+                      p.status,
                       (p.completionDate ? p.completionDate : @-1),
                       p.creationDate,
                       (p.deferredDate ? p.deferredDate : @-1),
@@ -196,7 +198,7 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
         [self.database update:@"CREATE TABLE tasks (id INTEGER PRIMARY KEY, name STRING, ofid STRING, projectID STRING, projectName STRING, ancestors STRING, creationDate DATE, completionDate DATE, deferredDate DATE);" withErrorAndBindings:nil];
     //Projects
     if ([self requiresType: JRDatabaseProjects])
-        [self.database update:@"CREATE TABLE projects (id INTEGER PRIMARY KEY, name STRING, ofid STRING, ancestors STRING, creationDate DATE, completionDate DATE, deferredDate DATE);" withErrorAndBindings:nil];
+        [self.database update:@"CREATE TABLE projects (id INTEGER PRIMARY KEY, name STRING, ofid STRING, ancestors STRING, status STRING,creationDate DATE, completionDate DATE, deferredDate DATE);" withErrorAndBindings:nil];
 }
 
 -(BOOL)requiresType:(JRDatabaseType) type {
