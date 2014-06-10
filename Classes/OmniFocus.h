@@ -54,7 +54,7 @@ typedef enum OmniFocusProjectStatus OmniFocusProjectStatus;
 
 - (NSDate *) creationDate;
 - (id) startDate;    //OF1
-- (id) deferredDate; //OF2
+- (id) deferDate; //OF2
 
 - (BOOL) completed;
 - (id) completionDate;
