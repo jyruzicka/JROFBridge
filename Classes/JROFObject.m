@@ -24,9 +24,6 @@
 -(NSString *)name { return nil; }
 -(NSString *)id { return nil; }
 
-//Don't record abstract class!
--(BOOL) shouldBeRecorded { return NO; }
-
 
 -(NSString *)ancestry {
     if (self.parent) {

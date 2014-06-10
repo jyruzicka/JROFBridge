@@ -49,6 +49,7 @@ typedef enum OmniFocusProjectStatus OmniFocusProjectStatus;
 - (NSString *) name;
 
 - (OmniFocusTask *)rootTask;
+- (OmniFocusTask *)nextTask;
 - (OmniFocusProjectStatus) status;
 - (id) container;
 

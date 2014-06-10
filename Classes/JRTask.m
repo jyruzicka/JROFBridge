@@ -14,8 +14,11 @@
 
 #pragma mark Initializer
 -(id)initWithTask:(OmniFocusTask *)task parent:(JROFObject *)parent {
-    if (self = [super initWithParent:parent])
+    if (!task)
+        self = nil;
+    else if (self = [super initWithParent:parent])
         _task = task;
+
     return self;
 }
 
@@ -38,7 +41,7 @@
 }
 
 -(NSDate *)completionDate {
-    if (!self.completed) return nil;
+    if (!self.isCompleted) return nil;
     
     if (!_completionDate) _completionDate = [self.task.completionDate get];
     return _completionDate;
@@ -54,8 +57,12 @@
     return _deferredDate;
 }
 
--(BOOL)completed {
+-(BOOL)isCompleted {
     return self.task.completed;
+}
+
+-(BOOL)isWaiting {
+    return ([((OmniFocusContext *) self.task.context).name rangeOfString:@"Waiting"].location == 0);
 }
 
 -(NSString *)projectName {

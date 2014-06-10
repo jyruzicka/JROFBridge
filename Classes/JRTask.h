@@ -13,7 +13,6 @@
     NSString *_name, *_id;
     NSString *_projectName, *_projectID;
     NSDate *_creationDate, *_completionDate, *_deferredDate;
-    BOOL _completed;
 }
 
 @property (atomic,readonly) OmniFocusTask *task;
@@ -30,7 +29,8 @@
 -(NSDate *)completionDate;
 
 //Other
--(BOOL)completed;
+-(BOOL)isCompleted;
+-(BOOL)isWaiting;
 
 //Project stuff
 -(NSString *)projectName;

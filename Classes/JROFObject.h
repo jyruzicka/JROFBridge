@@ -19,11 +19,6 @@
 #pragma mark Properties
 -(NSString *)name;
 -(NSString *)id;
-
-#pragma mark Derived methods
-//Should this object be recorded to the database?
--(BOOL)shouldBeRecorded;
-
 -(NSString *)ancestry;
 -(BOOL)hasAncestor:(NSString *)ancestor;
 @end

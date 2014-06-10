@@ -11,7 +11,6 @@
 @interface JRProject : JROFObject {
     NSString *_name, *_id, *_status;
     NSDate *_creationDate, *_completionDate, *_deferredDate;
-    BOOL _completed;
     
     NSMutableArray *_tasks;
 }
@@ -31,7 +30,7 @@
 -(NSDate *)creationDate;
 -(NSDate *)completionDate;
 -(NSDate *)deferredDate;
--(BOOL)completed;
+-(BOOL)isCompleted;
 
 #pragma mark Traversing the tree
 -(void)eachTask:(void (^)(JRTask *))function;

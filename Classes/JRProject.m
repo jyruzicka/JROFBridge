@@ -56,9 +56,17 @@
 
 -(NSString *)status {
     if (!_status) {
+        JRTask *t;
         switch (self.project.status) {
         case OmniFocusProjectStatusActive:
-            _status = @"Active";
+            t = [JRTask taskWithTask:self.project.nextTask parent:self];
+            if (t && t.isWaiting)
+                _status = @"Waiting on";
+            else if (self.deferredDate || t.deferredDate)
+                _status = @"Deferred";
+            else
+                _status = @"Active";
+            
             break;
         case OmniFocusProjectStatusOnHold:
             _status = @"On hold";
@@ -80,7 +88,7 @@
 }
 
 -(NSDate *)completionDate {
-    if (!self.completed) return nil;
+    if (!self.isCompleted) return nil;
     
     if (!_completionDate) _completionDate = [self.project.completionDate get];
     return _completionDate;
@@ -96,15 +104,12 @@
     return _deferredDate;
 }
 
--(BOOL)completed {
+-(BOOL)isCompleted {
     return self.project.completed;
 }
 
 #pragma mark Utility methods
 
--(BOOL)shouldBeRecorded {
-    return self.completed;
-}
 
 #pragma mark Traversing the tree
 -(void)eachTask:(void (^)(JRTask *))function {
