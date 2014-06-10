@@ -59,7 +59,7 @@
         JRTask *t;
         switch (self.project.status) {
         case OmniFocusProjectStatusActive:
-            t = [JRTask taskWithTask:self.project.nextTask parent:self];
+            t = [JRTask taskWithTask:[self.project.nextTask get] parent:self];
             if (t && t.isWaiting)
                 _status = @"Waiting on";
             else if (self.deferredDate || t.deferredDate)
@@ -107,9 +107,6 @@
 -(BOOL)isCompleted {
     return self.project.completed;
 }
-
-#pragma mark Utility methods
-
 
 #pragma mark Traversing the tree
 -(void)eachTask:(void (^)(JRTask *))function {
