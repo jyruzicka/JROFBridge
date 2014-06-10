@@ -70,7 +70,7 @@ static NSArray *kJRExcludedFolders;
     for (JRFolder *f in self.folders)
         [f eachTask:function];
     for (JRProject *p in self.projects)
-        [f eachTask:function];
+        [p eachTask:function];
 }
 
 -(void)eachProject:(void (^)(JRProject *))function {
