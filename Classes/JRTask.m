@@ -52,7 +52,7 @@
         if (JROmniFocus.instance.version == JROmniFocusVersion1)
             _deferredDate = [self.task.startDate get];
         else
-            _deferredDate = [self.task.deferredDate get];
+            _deferredDate = [self.task.deferDate get];
     }
     return _deferredDate;
 }
