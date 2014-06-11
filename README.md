@@ -8,8 +8,6 @@ Cocoa wrapper around OmniFocus' ScriptingBridge functionality. Navigate the proj
 
 ## Usage
 
-<!-- To run the example project; clone the repo, and run `pod install` from the Example directory first. -->
-
 The OmniFocus application is represented by an instance of `JROmniFocus`, which can be loaded via `+[JROmniFocus instance]`:
 
 ```

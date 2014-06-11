@@ -95,9 +95,8 @@
 }
 
 -(NSString *)count:(id *)value {
-  id pKeyValue = [self primaryKeyValueWithRemainder:nil];
-  *value = pKeyValue;
-  return [NSString stringWithFormat:@"SELECT COUNT(*) FROM %@ WHERE ofid=?",self.table];
+  *value = [self primaryKeyValueWithRemainder:nil];
+  return [NSString stringWithFormat:@"SELECT COUNT(*) FROM %@ WHERE %@=?",self.table, self.primaryKey];
 }
 
 #pragma mark Private methods
