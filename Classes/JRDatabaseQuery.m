@@ -64,7 +64,7 @@
   id pKeyValue = [self primaryKeyValueWithRemainder:&keys];
   
   //Value strings
-  NSMutableArray *keyStrings;
+  NSMutableArray *keyStrings = [NSMutableArray array];
   NSMutableArray *rValues = [NSMutableArray array]; //Ensure order is maintained
   for (NSString *k in keys) {
     [rValues addObject: self.values[k]];
@@ -94,9 +94,9 @@
                    self.table, self.primaryKey, pKeyType, [columns componentsJoinedByString:@","]];
 }
 
--(NSString *)count:(NSArray **)values {
+-(NSString *)count:(id *)value {
   id pKeyValue = [self primaryKeyValueWithRemainder:nil];
-  *values = @[pKeyValue];
+  *value = pKeyValue;
   return [NSString stringWithFormat:@"SELECT COUNT(*) FROM %@ WHERE ofid=?",self.table];
 }
 

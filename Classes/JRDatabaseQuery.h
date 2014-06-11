@@ -21,5 +21,5 @@
 -(NSString *)insert:(NSArray **)values;
 -(NSString *)update:(NSArray **)values;
 -(NSString *)create;
--(NSString *)count:(NSArray **)values;
+-(NSString *)count:(id *)values;
 @end

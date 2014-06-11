@@ -21,4 +21,6 @@
 -(NSString *)id;
 -(NSString *)ancestry;
 -(BOOL)hasAncestor:(NSString *)ancestor;
+
+-(BOOL)isCompleted;
 @end

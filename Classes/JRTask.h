@@ -29,7 +29,6 @@
 -(NSDate *)completionDate;
 
 //Other
--(BOOL)isCompleted;
 -(BOOL)isWaiting;
 
 //Project stuff

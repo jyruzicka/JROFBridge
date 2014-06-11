@@ -186,9 +186,9 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
 
 -(NSError *)updateDatabaseWithQuery:(JRDatabaseQuery *)q {
     //Count
-    NSArray *countArgs;
-    NSString *countQ = [q count:&countArgs];
-    NSUInteger count = [self.database intForQuery:countQ, countArgs];
+    id ofid;
+    NSString *countQ = [q count:&ofid];
+    NSUInteger count = [self.database intForQuery:countQ, ofid];
 
     NSArray *queryArgs;
     NSString *queryString;
@@ -196,7 +196,6 @@ static NSString *kJRTasksInsert = @"INSERT INTO tasks (name,projectID,projectNam
         queryString = [q update:&queryArgs];
     else
         queryString = [q insert:&queryArgs];
-
     if (![self.database executeUpdate:queryString withArgumentsInArray:queryArgs])
         return [self.database lastError];
     else

@@ -41,8 +41,5 @@
     return ([[self.ancestry componentsSeparatedByString:@","] containsObject: ancestor]);
 }
 
--(void)each:(void (^)(JROFObject *))function {
-    function(self);
-}
-
+-(BOOL)isCompleted{ return NO; }
 @end

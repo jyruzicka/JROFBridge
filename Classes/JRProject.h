@@ -30,7 +30,6 @@
 -(NSDate *)creationDate;
 -(NSDate *)completionDate;
 -(NSDate *)deferredDate;
--(BOOL)isCompleted;
 
 #pragma mark Traversing the tree
 -(void)eachTask:(void (^)(JRTask *))function;
