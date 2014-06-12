@@ -1,5 +1,9 @@
 # JROFBridge CHANGELOG
 
+## 0.2.2
+
+* Fixed a bug where projects with deferral dates in the past may still be marked "Deferred"
+
 ## 0.2.1
 
 * Added `-[JRProject remainingTasks]` - only returns those tasks which aren't complete.

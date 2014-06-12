@@ -69,7 +69,7 @@
         case OmniFocusProjectStatusActive:
             if (nextTask && nextTask.isWaiting)
                 _status = @"Waiting on";
-            else if (self.deferredDate || (nextTask && nextTask.deferredDate))
+            else if (self.deferralType != JRNotDeferred)
                 _status = @"Deferred";
             else
                 _status = @"Active";
