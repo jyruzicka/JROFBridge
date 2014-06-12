@@ -42,6 +42,14 @@
     return _tasks;
 }
 
+-(NSMutableArray *)remainingTasks {
+    if (!_remainingTasks) {
+        NSPredicate *p = [NSPredicate predicateWithFormat:@"completed == NO"];
+        _remainingTasks = [NSMutableArray arrayWithArray:[self.tasks filteredArrayUsingPredicate:p]];
+    }
+    return _remainingTasks;
+}
+
 #pragma mark Properties
 
 -(NSString *)name {
@@ -56,7 +64,7 @@
 
 -(NSString *)status {
     if (!_status) {
-        JRTask *nextTask = (self.tasks.count > 0 ? self.tasks[0] : nil);
+        JRTask *nextTask = (self.remainingTasks.count > 0 ? self.remainingTasks[0] : nil);
         switch (self.project.status) {
         case OmniFocusProjectStatusActive:
             if (nextTask && nextTask.isWaiting)
@@ -94,16 +102,57 @@
 }
 
 -(NSDate *)deferredDate {
-    if (!_deferredDate) {
-        if (JROmniFocus.instance.version == JROmniFocusVersion1)
-            _deferredDate = [self.project.startDate get];
-        else
-            _deferredDate = [self.project.deferDate get];
+    if (!_deferredDate) //Cheat: generate by running deferralType
+        [self deferralType];
 
-        if (!_deferredDate && self.tasks.count > 0)//Also check first task
-            _deferredDate = ((JRTask *)self.tasks[0]).deferredDate;
-    }
     return _deferredDate;
+}
+
+-(JRDeferralType)deferralType {
+    if (!_deferralType) {
+        NSDate *now = [NSDate date];
+        //Project overrides all
+        NSDate *projectDeferDate;
+        if (JROmniFocus.instance.version == JROmniFocusVersion1)
+            projectDeferDate = [self.project.startDate get];
+        else
+            projectDeferDate = [self.project.deferDate get];
+
+        if (projectDeferDate && [projectDeferDate laterDate:now] == projectDeferDate) {
+            _deferralType = JRProjectDeferred;
+            _deferredDate = projectDeferDate;
+        }
+        else {
+
+            //Then check task
+            if (self.remainingTasks.count > 0) {
+                NSDate *taskDeferDate = ((JRTask *) self.remainingTasks[0]).deferredDate;
+                if (taskDeferDate && [taskDeferDate laterDate:now] == taskDeferDate) {
+                    _deferralType = JRFirstTaskDeferred;
+                    _deferredDate = taskDeferDate;
+                }
+                else
+                    _deferralType = JRNotDeferred;
+            }
+            else //Not deferred
+                _deferralType = JRNotDeferred;
+        }
+    }
+    return _deferralType;
+}
+
+-(NSString *)deferralLabel {
+    switch (self.deferralType) {
+        case JRProjectDeferred:
+            return @"project";
+            break;
+        case JRFirstTaskDeferred:
+            return @"task";
+            break;
+        default:
+            return @"none";
+            break;
+    }
 }
 
 -(BOOL)isCompleted {
@@ -126,7 +175,8 @@
         @"creationDate": @"DATE",
         @"deferredDate": @"DATE",
         @"ofid": @"STRING",
-        @"numberOfTasks": @"INTEGER"
+        @"numberOfTasks": @"INTEGER",
+        @"deferralType": @"STRING"
     };
 }
 
@@ -139,7 +189,8 @@
         @"creationDate": self.creationDate,
         @"deferredDate": (self.deferredDate ? self.deferredDate : @-1),
         @"ofid": self.id,
-        @"numberOfTasks": @(self.tasks.count)
+        @"numberOfTasks": @(self.remainingTasks.count),
+        @"deferralType": self.deferralLabel
     };
 }
 

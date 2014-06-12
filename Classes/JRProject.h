@@ -6,19 +6,31 @@
 @class OmniFocusProject,JRTask;
 
 /**
+ * Represents how the project has been deferred.
+ *
+ * * `JRProjectDeferred`: The project itself has a deferral date set in the future
+ * * `JRFirstTaskDeferred`: The project is active, but the first task has a deferral date set on it
+ * * `JRNotDeferred`: Neither project nor first task are deferred.
+ */
+typedef enum {JRProjectDeferred=1, JRFirstTaskDeferred, JRNotDeferred} JRDeferralType;
+
+/**
  * Represents a folder in the OmniFocus tree
  */
 @interface JRProject : JROFObject {
     NSString *_name, *_id, *_status;
     NSDate *_creationDate, *_completionDate, *_deferredDate;
     
-    NSMutableArray *_tasks;
+    NSMutableArray *_tasks, *_remainingTasks;
+
+    JRDeferralType _deferralType;
 }
 
 /**
  * The OmniFocus project this object represents.
  */
 @property (atomic,readonly) OmniFocusProject *project;
+
 
 ///---------------------------------
 /// @name Initializers and factories
@@ -35,7 +47,7 @@
 /**
  * Default factory.
  *
- * @see initWithProject:parent:
+* @see initWithProject:parent:
  */
 +(JRProject *)projectWithProject:(OmniFocusProject *)project parent:(JROFObject *)parent;
 
@@ -51,9 +63,14 @@
 ///-------------------------
 
 /**
- * @return The projects's sub-tasks.
+ * @return The project's child tasks.
  */
 -(NSMutableArray *)tasks;
+
+/**
+ * @return Only those tasks which have yet to be completed.
+ */
+-(NSMutableArray *)remainingTasks;
 
 ///-----------------
 /// @name Properties
@@ -85,6 +102,18 @@
  * @return The project's defer date, or its first task's defer date if project has no defer date, or `nil` if neither has a defer date.
  */
 -(NSDate *)deferredDate;
+
+/**
+ * @return An instance of JRDeferralType, showing how the project has been deferred.
+ *
+ * @see JRDeferralType
+ */
+ -(JRDeferralType)deferralType;
+
+ /**
+  * @return A string representation of the deferralType.
+  */
+  -(NSString *)deferralLabel;
 
 ///--------------------------
 /// @name Traversing the tree

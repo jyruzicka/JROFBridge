@@ -1,6 +1,7 @@
-desc "Runs the specs [EMPTY]"
+desc "Runs the specs"
 task :spec do
-  # Provide your own implementation
+  sh "clang -ObjC Tests/main.m -o Tests/test -framework Cocoa -fobjc-arc"
+  sh "Tests/test"
 end
 
 task :version do
