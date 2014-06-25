@@ -83,7 +83,7 @@ static NSString *kJRProcessString;
                 return JROmniFocusVersion2Pro;
             }
             @catch (NSException *exception) {
-                return JROmniFocusVersion2;
+                return JROmniFocusVersion2Standard;
             }
         }
     }

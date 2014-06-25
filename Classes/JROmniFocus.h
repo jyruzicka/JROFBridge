@@ -9,7 +9,7 @@
 /**
  * Enum of OmniFocus versions
  */
-typedef enum {JROmniFocusVersion1, JROmniFocusVersion2, JROmniFocusVersion2Pro} JROmniFocusVersion;
+typedef enum {JROmniFocusVersion1, JROmniFocusVersion2Standard, JROmniFocusVersion2Pro} JROmniFocusVersion;
 
 /**
  * Acts as a wrapper object for omnifocus itself.

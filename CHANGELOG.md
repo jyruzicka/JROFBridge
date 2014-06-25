@@ -1,5 +1,9 @@
 # JROFBridge CHANGELOG
 
+## 0.2.3
+
+* Changed name of values in `JROmniFocusVersion` enum: Changed `JROmniFocusVersion2` to `JROmniFocusVersion2Standard` to make it more obvious which version it is.
+
 ## 0.2.2
 
 * Fixed a bug where projects with deferral dates in the past may still be marked "Deferred"
