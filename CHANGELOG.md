@@ -1,5 +1,9 @@
 # JROFBridge CHANGELOG
 
+## 0.2.4 - 2014-06-30
+
+* [FIXED] `-[JROmniFocus version]` now returns a sane and proper value.
+
 ## 0.2.3
 
 * Changed name of values in `JROmniFocusVersion` enum: Changed `JROmniFocusVersion2` to `JROmniFocusVersion2Standard` to make it more obvious which version it is.

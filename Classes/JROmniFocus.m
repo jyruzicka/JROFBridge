@@ -80,13 +80,14 @@ static NSString *kJRProcessString;
         else {
             @try {
                 [self.application defaultDocument];
-                return JROmniFocusVersion2Pro;
+                version = JROmniFocusVersion2Pro;
             }
             @catch (NSException *exception) {
-                return JROmniFocusVersion2Standard;
+                version = JROmniFocusVersion2Standard;
             }
         }
     }
+    return version;
 }
 
 -(NSMutableArray *)projects {
