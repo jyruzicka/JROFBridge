@@ -37,8 +37,9 @@
 #pragma mark Getters
 
 -(NSMutableArray *)tasks {
-    if (!_tasks)
-        _tasks = [JRTask tasksFromArray: self.project.rootTask.flattenedTasks parent:self];
+    if (!_tasks) {
+        _tasks = [JRTask tasksFromArray: self.project.rootTask.flattenedTasks.get parent:self];
+    }
     return _tasks;
 }
 

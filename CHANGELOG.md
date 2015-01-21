@@ -1,5 +1,9 @@
 # JROFBridge CHANGELOG
 
+## 0.2.5 - 2014-07-04
+
+* [NEW] `JROmniFocus` now contains instance methods `ofVersion` and `buildNumber` to determine the version of OmniFocus it's talking to.
+
 ## 0.2.4 - 2014-06-30
 
 * [FIXED] `-[JROmniFocus version]` now returns a sane and proper value.

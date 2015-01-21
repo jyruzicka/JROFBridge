@@ -22,7 +22,8 @@ typedef enum {JROmniFocusVersion1, JROmniFocusVersion2Standard, JROmniFocusVersi
 @interface JROmniFocus : NSObject {
     NSMutableArray *_projects, *_folders;
     NSMutableArray *_flattenedProjects, *_flattenedFolders, *_flattenedTasks;
-    JROmniFocusVersion version;
+    JROmniFocusVersion _version;
+    NSString *_ofVersion, *_buildNumber;
 }
 
 /**
@@ -34,6 +35,7 @@ typedef enum {JROmniFocusVersion1, JROmniFocusVersion2Standard, JROmniFocusVersi
  * The process string (bundle identifier) of this particular application.
  */
 @property NSString *processString;
+
 
 /**
  * Any top-level folders with names in this array will be ignored by the program.
@@ -64,6 +66,18 @@ typedef enum {JROmniFocusVersion1, JROmniFocusVersion2Standard, JROmniFocusVersi
  * @see JROmniFocusVersion
  */
 -(JROmniFocusVersion)version;
+
+/**
+ * The version of the current OmniFocus instance
+ */
+-(NSString *) ofVersion;
+
+
+/**
+ * The build number of the current OmniFocus instance
+ */
+ -(NSString *)buildNumber;
+
 
 /**
  * @return An array of top-level folders contained by the application.

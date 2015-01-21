@@ -1,8 +1,8 @@
 # JROFBridge
 
-[![Version](https://img.shields.io/cocoapods/v/JROFBridge.svg?style=flat)](http://cocoadocs.org/docsets/JROFBridge)
+<!-- [![Version](https://img.shields.io/cocoapods/v/JROFBridge.svg?style=flat)](http://cocoadocs.org/docsets/JROFBridge)
 [![License](https://img.shields.io/cocoapods/l/JROFBridge.svg?style=flat)](http://cocoadocs.org/docsets/JROFBridge)
-[![Platform](https://img.shields.io/cocoapods/p/JROFBridge.svg?style=flat)](http://cocoadocs.org/docsets/JROFBridge)
+[![Platform](https://img.shields.io/cocoapods/p/JROFBridge.svg?style=flat)](http://cocoadocs.org/docsets/JROFBridge) -->
 
 Cocoa wrapper around OmniFocus' ScriptingBridge functionality. Navigate the project/folder/task tree, skip projects, write to a SQLite database.
 

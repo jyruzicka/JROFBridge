@@ -22,6 +22,8 @@ typedef enum OmniFocusProjectStatus OmniFocusProjectStatus;
 
 @interface OmniFocusApplication : SBApplication
 - (OmniFocusDocument *) defaultDocument;
+- (NSString *) version;
+- (NSString *) buildNumber;
 @end
 
 @interface OmniFocusDocument : SBObject

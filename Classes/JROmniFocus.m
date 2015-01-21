@@ -49,7 +49,10 @@ static NSString *kJRProcessString;
         for (NSRunningApplication *app in apps) {
             if (!app.bundleIdentifier) continue;
             NSRange occurance = [app.bundleIdentifier rangeOfString:(NSString *)kJRIdentifierPrefix];
-            if (occurance.location != NSNotFound) { //string in the bundle identifier
+            if (
+                occurance.location != NSNotFound &&
+                ![app.bundleIdentifier isEqualToString: @"com.omnigroup.OmniFocus.Today"
+            ) { //string in the bundle identifier, not omnifocus.today (widget)
                 kJRProcessString = app.bundleIdentifier;
                 break;
             }
@@ -73,21 +76,33 @@ static NSString *kJRProcessString;
 #pragma mark - Instance methods and properties
 
 -(JROmniFocusVersion)version {
-    if (!version) {
+    if (!_version) {
         NSRange of2 = [self.processString rangeOfString:(NSString *)@"com.omnigroup.OmniFocus2"];
         if (of2.location == NSNotFound)
-            version = JROmniFocusVersion1;
+            _version = JROmniFocusVersion1;
         else {
             @try {
                 [self.application defaultDocument];
-                version = JROmniFocusVersion2Pro;
+                _version = JROmniFocusVersion2Pro;
             }
             @catch (NSException *exception) {
-                version = JROmniFocusVersion2Standard;
+                _version = JROmniFocusVersion2Standard;
             }
         }
     }
-    return version;
+    return _version;
+}
+
+-(NSString *)ofVersion {
+    if (!_ofVersion)
+        _ofVersion = self.application.version;
+    return _ofVersion;
+}
+
+-(NSString *)buildNumber {
+    if (!_buildNumber)
+        _buildNumber = self.application.buildNumber;
+    return _buildNumber;
 }
 
 -(NSMutableArray *)projects {
