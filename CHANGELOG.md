@@ -1,5 +1,9 @@
 # JROFBridge CHANGELOG
 
+## 0.2.6 - 2015-01-21
+
+* [FIXED] Will no longer recognise applications with id "com.omnigroup.OmniFocus.Today" (OmniFocus' new widget).
+
 ## 0.2.5 - 2014-07-04
 
 * [NEW] `JROmniFocus` now contains instance methods `ofVersion` and `buildNumber` to determine the version of OmniFocus it's talking to.
