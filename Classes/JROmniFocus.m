@@ -13,6 +13,7 @@
 
 //All OmniFocus processes start with this string
 static const NSString *kJRIdentifierPrefix = @"com.omnigroup.OmniFocus";
+static const NSString *kJRTodayIdentifier = @"Today";
 
 //Store instance of OmniFocus
 static JROmniFocus *kJRInstance;
@@ -49,9 +50,10 @@ static NSString *kJRProcessString;
         for (NSRunningApplication *app in apps) {
             if (!app.bundleIdentifier) continue;
             NSRange occurance = [app.bundleIdentifier rangeOfString:(NSString *)kJRIdentifierPrefix];
+            NSRange todayOccurance = [app.bundleIdentifier rangeOfString:(NSString *)kJRTodayIdentifier];
             if (
                 occurance.location != NSNotFound &&
-                ![app.bundleIdentifier isEqualToString: @"com.omnigroup.OmniFocus.Today"
+                todayOccurance.location == NSNotFound
             ) { //string in the bundle identifier, not omnifocus.today (widget)
                 kJRProcessString = app.bundleIdentifier;
                 break;

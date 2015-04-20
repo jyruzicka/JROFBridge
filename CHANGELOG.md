@@ -1,5 +1,9 @@
 # JROFBridge CHANGELOG
 
+## 0.2.7 - 2015-04-20
+
+* [FIXED] A more general method of identifying OmniFocus Today widgets.
+
 ## 0.2.6 - 2015-01-21
 
 * [FIXED] Will no longer recognise applications with id "com.omnigroup.OmniFocus.Today" (OmniFocus' new widget).
